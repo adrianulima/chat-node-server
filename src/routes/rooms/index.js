@@ -2,14 +2,15 @@ import { Router } from 'express'
 
 const rooms = Router()
 
-const roomsList = []
+const roomsList = {}
 
 rooms.get('/', (req, res) => {
-  const { limit = roomsList.length, offset = 0 } = req.query
+  const total = Object.keys(roomsList).length
+  const { limit = total, offset = 0 } = req.query
 
   res.status(200).json({
     list: roomsList,
-    total: roomsList.length,
+    total,
     limit,
     offset,
   })
