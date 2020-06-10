@@ -16,8 +16,6 @@ export const DBManager = () => {
         offset = parseInt(offset) || 0
         limit = parseInt(limit) || Object.keys(db).length
 
-        console.log(offset)
-        console.log(offset + limit)
         const list = sortBy(values(db), 'timestamp').slice(
           offset,
           offset + limit
@@ -54,7 +52,7 @@ export const DBManager = () => {
     delete: (id) => {
       return new Promise((resolve, reject) => {
         if (!!db[id]) {
-          db[id] = null
+          delete db[id]
           resolve(id)
         } else reject({ error: { status: 401, message: 'Object not found' } })
       })

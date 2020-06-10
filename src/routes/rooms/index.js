@@ -11,18 +11,15 @@ rooms.get('/', (req, res) => {
     .getAll(offset, limit)
     .then((roomList) => {
       roomList.list = map(roomList.list, (room) => {
-        room = Object.assign({}, room)
+        room = { ...room }
         room.protected = !!room.password
         delete room.password
         return room
       })
       res.status(200).json(roomList)
-      return
     })
     .catch((error) => {
-      console.log(error)
       res.status(error.status || 500).send({ error })
-      return
     })
 })
 
@@ -35,11 +32,9 @@ rooms.get('/:id', (req, res) => {
       room.protected = !!room.password
       delete room.password
       res.status(200).json(room)
-      return
     })
     .catch((error) => {
       res.status(error.status || 500).send({ error })
-      return
     })
 })
 
