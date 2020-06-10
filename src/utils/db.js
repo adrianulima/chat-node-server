@@ -36,8 +36,8 @@ export const DBManager = () => {
       return new Promise((resolve, reject) => {
         const id = uniqueId()
         if (!db[id]) {
-          db[room.id] = Object.assign({}, room, { id })
-          resolve(room)
+          db[room.id] = { ...room, id }
+          resolve(db[room.id])
         } else reject({ error: { status: 500, message: 'Database error' } })
       })
     },

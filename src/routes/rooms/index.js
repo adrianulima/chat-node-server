@@ -31,7 +31,7 @@ rooms.get('/:id', (req, res) => {
   roomManager
     .get(id)
     .then((room) => {
-      room = Object.assign({}, room)
+      room = { ...room }
       room.protected = !!room.password
       delete room.password
       res.status(200).json(room)
