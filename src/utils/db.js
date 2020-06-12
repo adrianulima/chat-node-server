@@ -1,4 +1,5 @@
 import { uniqueId, values, sortBy } from 'lodash'
+import HttpStatus from 'http-status-codes'
 
 export const DBManager = () => {
   const db = {}
@@ -7,26 +8,27 @@ export const DBManager = () => {
     get: (id) => {
       return new Promise((resolve, reject) => {
         if (db[id]) resolve(db[id])
-        else reject({ error: { status: 401, message: 'Object not found' } })
+        else
+          reject({
+            error: {
+              status: HttpStatus.NOT_FOUND,
+              message: 'Object not found',
+            },
+          })
       })
     },
 
     getAll: (offset, limit) => {
-      return new Promise((resolve, reject) => {
-        offset = parseInt(offset) || 0
-        limit = parseInt(limit) || Object.keys(db).length
+      offset = parseInt(offset) || 0
+      limit = parseInt(limit) || Object.keys(db).length
 
-        const list = sortBy(values(db), 'timestamp').slice(
-          offset,
-          offset + limit
-        )
+      const list = sortBy(values(db), 'timestamp').slice(offset, offset + limit)
 
-        resolve({
-          list: list,
-          total: Object.keys(db).length,
-          limit,
-          offset,
-        })
+      return Promise.resolve({
+        list: list,
+        total: Object.keys(db).length,
+        limit,
+        offset,
       })
     },
 
@@ -36,7 +38,13 @@ export const DBManager = () => {
         if (!db[id]) {
           db[room.id] = { ...room, id }
           resolve(db[room.id])
-        } else reject({ error: { status: 500, message: 'Database error' } })
+        } else
+          reject({
+            error: {
+              status: HttpStatus.INTERNAL_SERVER_ERROR,
+              message: 'Database error',
+            },
+          })
       })
     },
 
@@ -45,7 +53,13 @@ export const DBManager = () => {
         if (!!db[room.id]) {
           db[room.id] = room
           resolve(room)
-        } else reject({ error: { status: 401, message: 'Object not found' } })
+        } else
+          reject({
+            error: {
+              status: HttpStatus.NOT_FOUND,
+              message: 'Object not found',
+            },
+          })
       })
     },
 
@@ -54,8 +68,21 @@ export const DBManager = () => {
         if (!!db[id]) {
           delete db[id]
           resolve(id)
-        } else reject({ error: { status: 401, message: 'Object not found' } })
+        } else
+          reject({
+            error: {
+              status: HttpStatus.NOT_FOUND,
+              message: 'Object not found',
+            },
+          })
       })
+    },
+
+    clear: () => {
+      Object.keys(db).forEach((key) => {
+        delete db[key]
+      })
+      return Promise.resolve()
     },
   }
 }

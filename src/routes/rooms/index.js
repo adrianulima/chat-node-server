@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { map } from 'lodash'
 import { DBManager } from '../../utils/db'
+import HttpStatus from 'http-status-codes'
 
 const rooms = Router()
 const roomManager = DBManager()
@@ -16,10 +17,12 @@ rooms.get('/', (req, res) => {
         delete room.password
         return room
       })
-      res.status(200).json(roomList)
+      res.status(HttpStatus.OK).json(roomList)
     })
     .catch((error) => {
-      res.status(error.status || 500).send({ error })
+      res
+        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        .send({ error })
     })
 })
 
@@ -31,10 +34,12 @@ rooms.get('/:id', (req, res) => {
       room = { ...room }
       room.protected = !!room.password
       delete room.password
-      res.status(200).json(room)
+      res.status(HttpStatus.OK).json(room)
     })
     .catch((error) => {
-      res.status(error.status || 500).send({ error })
+      res
+        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        .send({ error })
     })
 })
 
