@@ -1,15 +1,16 @@
 import { Router } from 'express'
 import { map } from 'lodash'
-import { DBManager } from '../../utils/db'
+import { roomsDB } from '../../db'
+import messages from './messages'
 import HttpStatus from 'http-status-codes'
 
 const rooms = Router()
-const roomManager = DBManager()
+rooms.use('/:id/messages', messages)
 
 rooms.get('/', (req, res) => {
   const { offset, limit } = req.query
-  roomManager
-    .getAll(offset, limit)
+  roomsDB
+    .getAll({ offset, limit, sortProp: 'timestamp' })
     .then((roomList) => {
       roomList.list = map(roomList.list, (room) => {
         room = { ...room }
@@ -22,13 +23,13 @@ rooms.get('/', (req, res) => {
     .catch((error) => {
       res
         .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ error })
+        .json({ error })
     })
 })
 
 rooms.get('/:id', (req, res) => {
   const { id } = req.params
-  roomManager
+  roomsDB
     .get(id)
     .then((room) => {
       room = { ...room }
@@ -39,7 +40,7 @@ rooms.get('/:id', (req, res) => {
     .catch((error) => {
       res
         .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ error })
+        .json({ error })
     })
 })
 
