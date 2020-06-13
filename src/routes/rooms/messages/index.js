@@ -1,30 +1,24 @@
 import { Router } from 'express'
-import { includes } from 'lodash'
 import HttpStatus from 'http-status-codes'
 import { messagesDB, roomsDB, usersDB } from '../../../db'
+import { getItem } from '../../../db/helpers'
+import { checkPassword, checkRoomUsers } from '../helpers'
 
-const messages = Router()
+const messages = Router({ mergeParams: true })
 
 messages.post('/', async (req, res) => {
-  const { roomId, userId, text } = req.body
+  const { roomId } = req.params
+  const { userId, text } = req.body
+  const password = req.headers
 
-  const user = await usersDB.get(userId).catch((error) => {
-    res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ error })
-  })
+  const user = await getItem(usersDB, userId, res)
   if (!user) return
 
-  const room = await roomsDB.get(roomId).catch((error) => {
-    res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ error })
-  })
+  const room = await getItem(roomsDB, roomId, res)
   if (!room) return
 
-  if (!includes(room.users, user.userId)) {
-    res.status(HttpStatus.BAD_GATEWAY).json({
-      status: HttpStatus.BAD_GATEWAY,
-      message: 'User is not in the room',
-    })
+  if (!checkRoomUsers(room, userId, res) || !checkPassword(room, password, res))
     return
-  }
 
   messagesDB
     .insert({
@@ -36,6 +30,28 @@ messages.post('/', async (req, res) => {
     })
     .then((message) => {
       res.status(200).json(message)
+    })
+    .catch((error) => {
+      res
+        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ error })
+    })
+})
+
+messages.get('/', async (req, res) => {
+  const { roomId } = req.params
+  const { password } = req.headers
+  const { offset, limit } = req.query
+
+  const room = await getItem(roomsDB, roomId, res)
+  if (!room) return
+
+  if (!checkPassword(room, password, res)) return
+
+  messagesDB
+    .getAll({ offset, limit, sortProp: 'timestamp', order: 'desc' })
+    .then((messageList) => {
+      res.status(HttpStatus.OK).json(messageList)
     })
     .catch((error) => {
       res

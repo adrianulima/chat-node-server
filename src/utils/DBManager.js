@@ -1,4 +1,4 @@
-import { uniqueId, values, sortBy } from 'lodash'
+import { uniqueId, values, orderBy } from 'lodash'
 import HttpStatus from 'http-status-codes'
 
 const DBManager = ({ idKey, name }) => {
@@ -20,11 +20,15 @@ const DBManager = ({ idKey, name }) => {
       })
     },
 
-    getAll: ({ offset = 0, limit = 0, sortProp } = {}) => {
+
+    getAll: ({ offset = 0, limit = 0, sortProp, order = 'asc' } = {}) => {
       offset = parseInt(offset)
       limit = parseInt(limit) || Object.keys(db).length
 
-      const list = sortBy(values(db), sortProp).slice(offset, offset + limit)
+      const list = orderBy(values(db), sortProp, order).slice(
+        offset,
+        offset + limit
+      )
 
       return Promise.resolve({
         list: list,

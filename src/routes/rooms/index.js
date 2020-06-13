@@ -5,7 +5,7 @@ import messages from './messages'
 import HttpStatus from 'http-status-codes'
 
 const rooms = Router()
-rooms.use('/:id/messages', messages)
+rooms.use('/:roomId/messages', messages)
 
 rooms.get('/', (req, res) => {
   const { offset, limit } = req.query
@@ -27,10 +27,10 @@ rooms.get('/', (req, res) => {
     })
 })
 
-rooms.get('/:id', (req, res) => {
-  const { id } = req.params
+rooms.get('/:roomId', (req, res) => {
+  const { roomId } = req.params
   roomsDB
-    .get(id)
+    .get(roomId)
     .then((room) => {
       room = { ...room }
       room.protected = !!room.password
