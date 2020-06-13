@@ -1,7 +1,9 @@
 import { uniqueId, values, sortBy } from 'lodash'
 import HttpStatus from 'http-status-codes'
 
-export const DBManager = () => {
+const DBManager = ({ idKey, name }) => {
+  if (!name) throw 'Name is required'
+  idKey = idKey || `${name.toLowerCase()}Id`
   const db = {}
 
   return {
@@ -12,17 +14,17 @@ export const DBManager = () => {
           reject({
             error: {
               status: HttpStatus.NOT_FOUND,
-              message: 'Object not found',
+              message: `${name} not found`,
             },
           })
       })
     },
 
-    getAll: (offset, limit) => {
-      offset = parseInt(offset) || 0
+    getAll: ({ offset = 0, limit = 0, sortProp } = {}) => {
+      offset = parseInt(offset)
       limit = parseInt(limit) || Object.keys(db).length
 
-      const list = sortBy(values(db), 'timestamp').slice(offset, offset + limit)
+      const list = sortBy(values(db), sortProp).slice(offset, offset + limit)
 
       return Promise.resolve({
         list: list,
@@ -32,12 +34,12 @@ export const DBManager = () => {
       })
     },
 
-    insert: (room) => {
+    insert: (item) => {
       return new Promise((resolve, reject) => {
         const id = uniqueId()
         if (!db[id]) {
-          db[room.id] = { ...room, id }
-          resolve(db[room.id])
+          db[id] = { ...item, [idKey]: id }
+          resolve(db[id])
         } else
           reject({
             error: {
@@ -48,16 +50,16 @@ export const DBManager = () => {
       })
     },
 
-    update: (room) => {
+    update: (item) => {
       return new Promise((resolve, reject) => {
-        if (!!db[room.id]) {
-          db[room.id] = room
-          resolve(room)
+        if (!!db[item[idKey]]) {
+          db[item[idKey]] = item
+          resolve(item)
         } else
           reject({
             error: {
               status: HttpStatus.NOT_FOUND,
-              message: 'Object not found',
+              message: `${name} not found`,
             },
           })
       })
@@ -72,7 +74,7 @@ export const DBManager = () => {
           reject({
             error: {
               status: HttpStatus.NOT_FOUND,
-              message: 'Object not found',
+              message: `${name} not found`,
             },
           })
       })
@@ -86,3 +88,5 @@ export const DBManager = () => {
     },
   }
 }
+
+export default DBManager
