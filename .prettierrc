@@ -2,8 +2,8 @@
   "bracketSpacing": true,
   "jsxBracketSameLine": false,
   "singleQuote": true,
-  "trailingComa": "es5",
+  "trailingComma": "es5",
   "semi": false,
-  "arrowParams": "always",
+  "arrowParens": "always",
   "tabWidth": 2
 }

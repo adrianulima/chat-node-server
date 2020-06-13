@@ -2,7 +2,7 @@ import { uniqueId, values, orderBy } from 'lodash'
 import HttpStatus from 'http-status-codes'
 
 const DBManager = ({ idKey, name }) => {
-  if (!name) throw 'Name is required'
+  if (!name) throw new Error('Name is required')
   idKey = idKey || `${name.toLowerCase()}Id`
   const db = {}
 
@@ -19,7 +19,6 @@ const DBManager = ({ idKey, name }) => {
           })
       })
     },
-
 
     getAll: ({ offset = 0, limit = 0, sortProp, order = 'asc' } = {}) => {
       offset = parseInt(offset)
@@ -56,7 +55,7 @@ const DBManager = ({ idKey, name }) => {
 
     update: (item) => {
       return new Promise((resolve, reject) => {
-        if (!!db[item[idKey]]) {
+        if (db[item[idKey]]) {
           db[item[idKey]] = item
           resolve(item)
         } else
@@ -71,7 +70,7 @@ const DBManager = ({ idKey, name }) => {
 
     delete: (id) => {
       return new Promise((resolve, reject) => {
-        if (!!db[id]) {
+        if (db[id]) {
           delete db[id]
           resolve(id)
         } else
