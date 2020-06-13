@@ -20,6 +20,7 @@ const DBManager = ({ idKey, name }) => {
       })
     },
 
+
     getAll: ({ offset = 0, limit = 0, sortProp, order = 'asc' } = {}) => {
       offset = parseInt(offset)
       limit = parseInt(limit) || Object.keys(db).length
