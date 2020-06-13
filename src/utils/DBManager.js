@@ -9,8 +9,6 @@ const DBManager = ({ idKey, name }) => {
   return {
     get: (id) => {
       return new Promise((resolve, reject) => {
-        console.log(id)
-        console.log(db)
         if (db[id]) resolve(db[id])
         else
           reject({
