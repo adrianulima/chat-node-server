@@ -56,8 +56,8 @@ const DBManager = ({ idKey, name }) => {
     update: (item) => {
       return new Promise((resolve, reject) => {
         if (db[item[idKey]]) {
-          db[item[idKey]] = item
-          resolve(item)
+          db[item[idKey]] = { ...db[item[idKey]], ...item }
+          resolve(db[item[idKey]])
         } else
           reject({
             error: {
