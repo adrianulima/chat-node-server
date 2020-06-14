@@ -93,4 +93,19 @@ rooms.put('/:roomId', (req, res) => {
     })
 })
 
+rooms.delete('/:roomId', (req, res) => {
+  const { roomId } = req.params
+
+  roomsDB
+    .delete(roomId)
+    .then((room) => {
+      res.status(HttpStatus.OK).json(room)
+    })
+    .catch((error) => {
+      res
+        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ error })
+    })
+})
+
 export default rooms
