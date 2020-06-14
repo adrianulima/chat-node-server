@@ -1,12 +1,20 @@
 import { uniqueId, values, orderBy } from 'lodash'
 import HttpStatus from 'http-status-codes'
 
-const DBManager = ({ idKey, name }) => {
+// eslint-disable-next-line jsdoc/require-returns
+/**
+ * @param  {{ name:string, idKey?:string}} props
+ */
+const DBManager = ({ name, idKey }) => {
   if (!name) throw new Error('Name is required')
   idKey = idKey || `${name.toLowerCase()}Id`
   const db = {}
 
   return {
+    /**
+     * @param  {string} id
+     * @returns  {Promise}
+     */
     get: (id) => {
       return new Promise((resolve, reject) => {
         if (db[id]) resolve(db[id])
@@ -20,9 +28,12 @@ const DBManager = ({ idKey, name }) => {
       })
     },
 
+    /**
+     * @param  {{ offset?:number, limit?:number, sortProp?:string, order?:any}=} props
+     * @returns  {Promise<{ list:Array, total:number, limit:number, offset:number }>}
+     */
     getAll: ({ offset = 0, limit = 0, sortProp, order = 'asc' } = {}) => {
-      offset = parseInt(offset)
-      limit = parseInt(limit) || Object.keys(db).length
+      limit = limit || Object.keys(db).length
 
       const list = orderBy(values(db), sortProp, order).slice(
         offset,
@@ -37,6 +48,10 @@ const DBManager = ({ idKey, name }) => {
       })
     },
 
+    /**
+     * @param  {any} item
+     * @returns  {Promise}
+     */
     insert: (item) => {
       return new Promise((resolve, reject) => {
         const id = uniqueId()
@@ -53,6 +68,10 @@ const DBManager = ({ idKey, name }) => {
       })
     },
 
+    /**
+     * @param  {any} item
+     * @returns  {Promise}
+     */
     update: (item) => {
       return new Promise((resolve, reject) => {
         if (db[item[idKey]]) {
@@ -68,6 +87,10 @@ const DBManager = ({ idKey, name }) => {
       })
     },
 
+    /**
+     * @param  {string} id
+     * @returns  {Promise}
+     */
     delete: (id) => {
       return new Promise((resolve, reject) => {
         if (db[id]) {
@@ -83,6 +106,9 @@ const DBManager = ({ idKey, name }) => {
       })
     },
 
+    /**
+     * @returns  {Promise}
+     */
     clear: () => {
       Object.keys(db).forEach((key) => {
         delete db[key]

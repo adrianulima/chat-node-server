@@ -12,8 +12,11 @@
   "rules": {
     "prettier/prettier": "error",
     "comma-dangle": 0,
+    "prefer-template": 1,
     "prefer-promise-reject-errors": 0,
     "jsdoc/require-param-description": 0,
+    "jsdoc/require-property-description": 0,
+    "jsdoc/check-types": 0,
     "jsdoc/require-returns-description": 0
   }
 }
