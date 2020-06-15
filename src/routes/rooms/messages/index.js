@@ -49,7 +49,12 @@ messages.get('/', async (req, res) => {
   if (!checkPassword(room, password, res)) return
 
   messagesDB
-    .getAll({ offset, limit, sortProp: 'timestamp', order: 'desc' })
+    .getAll({
+      offset: +offset,
+      limit: +limit,
+      sortProp: 'timestamp',
+      order: 'desc',
+    })
     .then((messageList) => {
       res.status(HttpStatus.OK).json(messageList)
     })

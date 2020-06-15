@@ -10,7 +10,7 @@ rooms.use('/:roomId/messages', messages)
 rooms.get('/', (req, res) => {
   const { offset, limit } = req.query
   roomsDB
-    .getAll({ offset, limit, sortProp: 'timestamp' })
+    .getAll({ offset: +offset, limit: +limit, sortProp: 'timestamp' })
     .then((roomList) => {
       roomList.list = map(roomList.list, (room) => {
         room = { ...room }
