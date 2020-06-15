@@ -89,7 +89,7 @@ const DBManager = ({ name, idKey }) => {
 
     /**
      * @param  {string} id
-     * @returns  {Promise}
+     * @returns  {Promise<string>}
      */
     delete: (id) => {
       return new Promise((resolve, reject) => {
