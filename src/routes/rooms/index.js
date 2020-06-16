@@ -31,7 +31,7 @@ rooms.post('/', (req, res) => {
 rooms.get('/', (req, res) => {
   const { offset, limit } = req.query
   roomsDB
-    .getAll({ offset: +offset, limit: +limit, sortProp: 'timestamp' })
+    .getAll({ offset: +offset || 0, limit: +limit || 0, sortProp: 'timestamp' })
     .then((roomList) => {
       roomList.list = map(roomList.list, (room) => {
         room = { ...room }

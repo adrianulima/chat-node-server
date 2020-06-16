@@ -50,8 +50,8 @@ messages.get('/', async (req, res) => {
 
   messagesDB
     .getAll({
-      offset: +offset,
-      limit: +limit,
+      offset: +offset || 0,
+      limit: +limit || 0,
       sortProp: 'timestamp',
       order: 'desc',
     })

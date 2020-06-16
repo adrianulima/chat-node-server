@@ -5,10 +5,7 @@
     "prettier/standard",
     "plugin:jsdoc/recommended"
   ],
-  "plugins": [
-    "eslint-plugin-prettier",
-    "jsdoc"
-  ],
+  "plugins": ["eslint-plugin-prettier", "jsdoc"],
   "rules": {
     "prettier/prettier": "error",
     "comma-dangle": 0,
