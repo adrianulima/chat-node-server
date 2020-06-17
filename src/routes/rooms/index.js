@@ -2,10 +2,12 @@ import { Router } from 'express'
 import { map } from 'lodash'
 import { roomsDB } from '../../db'
 import messages from './messages'
+import users from './users'
 import HttpStatus from 'http-status-codes'
 
 const rooms = Router()
 rooms.use('/:roomId/messages', messages)
+rooms.use('/:roomId/users', users)
 
 rooms.post('/', (req, res) => {
   const { size, password } = req.body
