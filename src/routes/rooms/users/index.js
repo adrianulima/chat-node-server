@@ -3,6 +3,7 @@ import HttpStatus from 'http-status-codes'
 import { roomsDB, usersDB } from '../../../db'
 import { getItem } from '../../../db/helpers'
 import { checkPassword } from '../helpers'
+import { sendError } from '../../../utils/errorHandler'
 
 const users = Router({ mergeParams: true })
 
@@ -22,9 +23,7 @@ users.post('/', async (req, res) => {
       res.status(200).json(user)
     })
     .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
+      sendError(res, error)
     })
 })
 
@@ -47,9 +46,7 @@ users.get('/', async (req, res) => {
       res.status(HttpStatus.OK).json(userList)
     })
     .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
+      sendError(res, error)
     })
 })
 
