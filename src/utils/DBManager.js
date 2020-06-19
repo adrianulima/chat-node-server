@@ -1,12 +1,16 @@
 import { uniqueId, values, orderBy } from 'lodash'
-import HttpStatus from 'http-status-codes'
+import {
+  ItemNotFoundError,
+  MissingParamError,
+  InternalServerError,
+} from './ErrorHandler'
 
 // eslint-disable-next-line jsdoc/require-returns
 /**
  * @param  {{ name:string, idKey?:string}} props
  */
 const DBManager = ({ name, idKey }) => {
-  if (!name) throw new Error('Name is required')
+  if (!name) throw new MissingParamError('Name')
   idKey = idKey || `${name.toLowerCase()}Id`
   const db = {}
 
@@ -18,13 +22,7 @@ const DBManager = ({ name, idKey }) => {
     get: (id) => {
       return new Promise((resolve, reject) => {
         if (db[id]) resolve(db[id])
-        else
-          reject({
-            error: {
-              status: HttpStatus.NOT_FOUND,
-              message: `${name} not found`,
-            },
-          })
+        else reject(new ItemNotFoundError(name))
       })
     },
 
@@ -58,13 +56,7 @@ const DBManager = ({ name, idKey }) => {
         if (!db[id]) {
           db[id] = { ...item, [idKey]: id }
           resolve(db[id])
-        } else
-          reject({
-            error: {
-              status: HttpStatus.INTERNAL_SERVER_ERROR,
-              message: 'Database error',
-            },
-          })
+        } else reject(new InternalServerError())
       })
     },
 
@@ -77,13 +69,7 @@ const DBManager = ({ name, idKey }) => {
         if (db[item[idKey]]) {
           db[item[idKey]] = { ...db[item[idKey]], ...item }
           resolve(db[item[idKey]])
-        } else
-          reject({
-            error: {
-              status: HttpStatus.NOT_FOUND,
-              message: `${name} not found`,
-            },
-          })
+        } else reject(new ItemNotFoundError(name))
       })
     },
 
@@ -96,13 +82,7 @@ const DBManager = ({ name, idKey }) => {
         if (db[id]) {
           delete db[id]
           resolve(id)
-        } else
-          reject({
-            error: {
-              status: HttpStatus.NOT_FOUND,
-              message: `${name} not found`,
-            },
-          })
+        } else reject(new ItemNotFoundError(name))
       })
     },
 

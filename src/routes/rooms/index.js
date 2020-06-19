@@ -4,6 +4,7 @@ import { roomsDB } from '../../db'
 import messages from './messages'
 import users from './users'
 import HttpStatus from 'http-status-codes'
+import { sendError } from '../../utils/errorHandler'
 
 const rooms = Router()
 rooms.use('/:roomId/messages', messages)
@@ -24,9 +25,7 @@ rooms.post('/', (req, res) => {
       res.status(HttpStatus.OK).json(room)
     })
     .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
+      sendError(res, error)
     })
 })
 
@@ -44,9 +43,7 @@ rooms.get('/', (req, res) => {
       res.status(HttpStatus.OK).json(roomList)
     })
     .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
+      sendError(res, error)
     })
 })
 
@@ -61,9 +58,7 @@ rooms.get('/:roomId', (req, res) => {
       res.status(HttpStatus.OK).json(room)
     })
     .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
+      sendError(res, error)
     })
 })
 
@@ -89,9 +84,7 @@ rooms.put('/:roomId', (req, res) => {
       res.status(HttpStatus.OK).json(room)
     })
     .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
+      sendError(res, error)
     })
 })
 
@@ -104,9 +97,7 @@ rooms.delete('/:roomId', (req, res) => {
       res.status(HttpStatus.OK).json(room)
     })
     .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
+      sendError(res, error)
     })
 })
 
