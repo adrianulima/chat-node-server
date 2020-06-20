@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { map } from 'lodash'
-import { roomsDB } from '../../db'
+import { map, filter } from 'lodash'
+import { roomsDB, usersDB } from '../../db'
 import messages from './messages'
 import users from './users'
 import HttpStatus from 'http-status-codes'
@@ -30,15 +30,24 @@ rooms.post('/', (req, res) => {
     })
 })
 
-rooms.get('/', (req, res) => {
+rooms.get('/', async (req, res) => {
   const { offset, limit } = req.query
+  const allUsers = await usersDB.getAll()
+
   roomsDB
     .getAll({ offset: +offset || 0, limit: +limit || 0, sortProp: 'timestamp' })
     .then((roomList) => {
       roomList.list = map(roomList.list, (room) => {
         room = { ...room }
+
+        room.usersCount = filter(
+          allUsers.list,
+          (user) => user.roomId === room.roomId
+        ).length
+
         room.protected = !!room.password
         delete room.password
+
         return room
       })
       res.status(HttpStatus.OK).json(roomList)
@@ -50,12 +59,18 @@ rooms.get('/', (req, res) => {
     })
 })
 
-rooms.get('/:roomId', (req, res) => {
+rooms.get('/:roomId', async (req, res) => {
   const { roomId } = req.params
+  const allUsers = await usersDB.getAll()
+
   roomsDB
     .get(roomId)
     .then((room) => {
       room = { ...room }
+
+      room.users = filter(allUsers.list, (user) => user.roomId === room.roomId)
+      room.usersCount = room.users.length
+
       room.protected = !!room.password
       delete room.password
       res.status(HttpStatus.OK).json(room)
