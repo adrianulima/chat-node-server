@@ -4,6 +4,7 @@ import { roomsDB, usersDB } from '../../db'
 import messages from './messages'
 import users from './users'
 import HttpStatus from 'http-status-codes'
+import { sendError } from '../../utils/errorHandler'
 
 const rooms = Router()
 rooms.use('/:roomId/messages', messages)
@@ -23,11 +24,7 @@ rooms.post('/', (req, res) => {
       delete room.password
       res.status(HttpStatus.OK).json(room)
     })
-    .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
-    })
+    .catch((error) => sendError(res, error))
 })
 
 rooms.get('/', async (req, res) => {
@@ -52,11 +49,7 @@ rooms.get('/', async (req, res) => {
       })
       res.status(HttpStatus.OK).json(roomList)
     })
-    .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
-    })
+    .catch((error) => sendError(res, error))
 })
 
 rooms.get('/:roomId', async (req, res) => {
@@ -75,11 +68,7 @@ rooms.get('/:roomId', async (req, res) => {
       delete room.password
       res.status(HttpStatus.OK).json(room)
     })
-    .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
-    })
+    .catch((error) => sendError(res, error))
 })
 
 rooms.put('/:roomId', (req, res) => {
@@ -87,13 +76,9 @@ rooms.put('/:roomId', (req, res) => {
   const { size, password } = req.body
   const item = { roomId }
 
-  if (size) {
-    item.size = size
-  }
+  if (size) item.size = size
 
-  if (password !== undefined) {
-    item.password = password
-  }
+  if (password !== undefined) item.password = password
 
   roomsDB
     .update(item)
@@ -103,11 +88,7 @@ rooms.put('/:roomId', (req, res) => {
       delete room.password
       res.status(HttpStatus.OK).json(room)
     })
-    .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
-    })
+    .catch((error) => sendError(res, error))
 })
 
 rooms.delete('/:roomId', (req, res) => {
@@ -115,14 +96,8 @@ rooms.delete('/:roomId', (req, res) => {
 
   roomsDB
     .delete(roomId)
-    .then((room) => {
-      res.status(HttpStatus.OK).json(room)
-    })
-    .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
-    })
+    .then((room) => res.status(HttpStatus.OK).json(room))
+    .catch((error) => sendError(res, error))
 })
 
 export default rooms

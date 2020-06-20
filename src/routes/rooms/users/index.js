@@ -3,13 +3,14 @@ import HttpStatus from 'http-status-codes'
 import { roomsDB, usersDB } from '../../../db'
 import { getItem } from '../../../db/helpers'
 import { checkPassword } from '../helpers'
+import { sendError } from '../../../utils/errorHandler'
 
 const users = Router({ mergeParams: true })
 
 users.post('/', async (req, res) => {
   const { roomId } = req.params
   const { userName } = req.body
-  const password = req.headers
+  const { password } = req.headers
 
   const room = await getItem(roomsDB, roomId, res)
   if (!room) return
@@ -18,14 +19,8 @@ users.post('/', async (req, res) => {
 
   usersDB
     .insert({ userName, roomId })
-    .then((user) => {
-      res.status(200).json(user)
-    })
-    .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
-    })
+    .then((user) => res.status(200).json(user))
+    .catch((error) => sendError(res, error))
 })
 
 users.get('/', async (req, res) => {
@@ -43,14 +38,8 @@ users.get('/', async (req, res) => {
       offset: +offset || 0,
       limit: +limit || 0,
     })
-    .then((userList) => {
-      res.status(HttpStatus.OK).json(userList)
-    })
-    .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
-    })
+    .then((userList) => res.status(HttpStatus.OK).json(userList))
+    .catch((error) => sendError(res, error))
 })
 
 export default users

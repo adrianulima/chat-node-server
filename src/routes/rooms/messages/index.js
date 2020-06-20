@@ -3,6 +3,7 @@ import HttpStatus from 'http-status-codes'
 import { messagesDB, roomsDB, usersDB } from '../../../db'
 import { getItem } from '../../../db/helpers'
 import { checkPassword, checkRoomUsers } from '../helpers'
+import { sendError } from '../../../utils/errorHandler'
 
 const messages = Router({ mergeParams: true })
 
@@ -28,14 +29,8 @@ messages.post('/', async (req, res) => {
       text,
       timestamp: new Date().getTime(),
     })
-    .then((message) => {
-      res.status(200).json(message)
-    })
-    .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
-    })
+    .then((message) => res.status(200).json(message))
+    .catch((error) => sendError(res, error))
 })
 
 messages.get('/', async (req, res) => {
@@ -55,14 +50,8 @@ messages.get('/', async (req, res) => {
       sortProp: 'timestamp',
       order: 'desc',
     })
-    .then((messageList) => {
-      res.status(HttpStatus.OK).json(messageList)
-    })
-    .catch((error) => {
-      res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error })
-    })
+    .then((messageList) => res.status(HttpStatus.OK).json(messageList))
+    .catch((error) => sendError(res, error))
 })
 
 export default messages
