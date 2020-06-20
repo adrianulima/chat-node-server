@@ -17,3 +17,12 @@ export const checkRoomUser = (room, userId, res) => {
 
   return true
 }
+
+export const isFull = (room, res) => {
+  if (room.users && room.users.length >= room.size) {
+    if (res) sendError(res, new NotAutorizedError('This room is full'))
+    return true
+  }
+
+  return false
+}
