@@ -1,4 +1,4 @@
-import { includes } from 'lodash'
+import { find } from 'lodash'
 import { sendError, NotAutorizedError } from '../../utils/errorHandler'
 
 export const checkPassword = (room, password, res) => {
@@ -9,8 +9,8 @@ export const checkPassword = (room, password, res) => {
   return true
 }
 
-export const checkRoomUsers = (room, userIds, res) => {
-  if (!includes(room.users, userIds)) {
+export const checkRoomUser = (room, userId, res) => {
+  if (!find(room.users, (user) => user.userId === userId)) {
     if (res) sendError(res, new NotAutorizedError('User is not in the room'))
     return false
   }
