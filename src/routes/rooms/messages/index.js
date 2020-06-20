@@ -47,7 +47,7 @@ messages.get('/', async (req, res) => {
     .getAll({
       offset: +offset || 0,
       limit: +limit || 0,
-      sortProp: 'timestamp',
+      sort: 'timestamp',
       order: 'desc',
     })
     .then((messageList) => res.status(HttpStatus.OK).json(messageList))

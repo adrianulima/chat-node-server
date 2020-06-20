@@ -32,7 +32,7 @@ rooms.get('/', async (req, res) => {
   const allUsers = await usersDB.getAll()
 
   roomsDB
-    .getAll({ offset: +offset || 0, limit: +limit || 0, sortProp: 'timestamp' })
+    .getAll({ offset: +offset || 0, limit: +limit || 0, sort: 'timestamp' })
     .then((roomList) => {
       roomList.list = map(roomList.list, (room) => {
         room = { ...room }

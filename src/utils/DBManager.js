@@ -1,4 +1,4 @@
-import { values, orderBy } from 'lodash'
+import { values, orderBy, filter as _filter } from 'lodash'
 import {
   ItemNotFoundError,
   MissingParamError,
@@ -28,13 +28,19 @@ const DBManager = ({ name, idKey }) => {
       }),
 
     /**
-     * @param  {{ offset?:number, limit?:number, sortProp?:string, order?:any}=} props
+     * @param  {{
+     *   offset?: number,
+     *   limit?: number,
+     *   filter?: Function,
+     *   sort?: (Array[]|Function[]|object[]|string[]|string),
+     *   order?: any
+     * }=} props
      * @returns  {Promise<{ list:Array, total:number, limit:number, offset:number }>}
      */
-    getAll: ({ offset = 0, limit = 0, sortProp, order = 'asc' } = {}) => {
+    getAll: ({ offset = 0, limit = 0, filter, sort, order = 'asc' } = {}) => {
       limit = limit || Object.keys(db).length
 
-      const list = orderBy(values(db), sortProp, order).slice(
+      const list = orderBy(_filter(values(db), filter), sort, order).slice(
         offset,
         offset + limit
       )
