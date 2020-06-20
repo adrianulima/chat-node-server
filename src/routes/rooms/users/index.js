@@ -18,7 +18,7 @@ users.post('/', async (req, res) => {
   if (!checkPassword(room, password, res)) return
 
   usersDB
-    .insert({ userName })
+    .insert({ userName, roomId })
     .then((user) => res.status(200).json(user))
     .catch((error) => sendError(res, error))
 })
