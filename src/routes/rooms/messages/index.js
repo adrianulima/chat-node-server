@@ -29,12 +29,8 @@ messages.post('/', async (req, res) => {
       text,
       timestamp: new Date().getTime(),
     })
-    .then((message) => {
-      res.status(200).json(message)
-    })
-    .catch((error) => {
-      sendError(res, error)
-    })
+    .then((message) => res.status(200).json(message))
+    .catch((error) => sendError(res, error))
 })
 
 messages.get('/', async (req, res) => {
@@ -54,12 +50,8 @@ messages.get('/', async (req, res) => {
       sortProp: 'timestamp',
       order: 'desc',
     })
-    .then((messageList) => {
-      res.status(HttpStatus.OK).json(messageList)
-    })
-    .catch((error) => {
-      sendError(res, error)
-    })
+    .then((messageList) => res.status(HttpStatus.OK).json(messageList))
+    .catch((error) => sendError(res, error))
 })
 
 export default messages

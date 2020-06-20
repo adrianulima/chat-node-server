@@ -18,13 +18,9 @@ users.post('/', async (req, res) => {
   if (!checkPassword(room, password, res)) return
 
   usersDB
-    .insert(userName)
-    .then((user) => {
-      res.status(200).json(user)
-    })
-    .catch((error) => {
-      sendError(res, error)
-    })
+    .insert({ userName })
+    .then((user) => res.status(200).json(user))
+    .catch((error) => sendError(res, error))
 })
 
 users.get('/', async (req, res) => {
@@ -42,12 +38,8 @@ users.get('/', async (req, res) => {
       offset: +offset || 0,
       limit: +limit || 0,
     })
-    .then((userList) => {
-      res.status(HttpStatus.OK).json(userList)
-    })
-    .catch((error) => {
-      sendError(res, error)
-    })
+    .then((userList) => res.status(HttpStatus.OK).json(userList))
+    .catch((error) => sendError(res, error))
 })
 
 export default users

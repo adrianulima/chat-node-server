@@ -19,12 +19,11 @@ const DBManager = ({ name, idKey }) => {
      * @param  {string} id
      * @returns  {Promise}
      */
-    get: (id) => {
-      return new Promise((resolve, reject) => {
+    get: (id) =>
+      new Promise((resolve, reject) => {
         if (db[id]) resolve(db[id])
         else reject(new ItemNotFoundError(name))
-      })
-    },
+      }),
 
     /**
      * @param  {{ offset?:number, limit?:number, sortProp?:string, order?:any}=} props
@@ -50,41 +49,38 @@ const DBManager = ({ name, idKey }) => {
      * @param  {any} item
      * @returns  {Promise}
      */
-    insert: (item) => {
-      return new Promise((resolve, reject) => {
+    insert: (item) =>
+      new Promise((resolve, reject) => {
         const id = uniqueId()
         if (!db[id]) {
           db[id] = { ...item, [idKey]: id }
           resolve(db[id])
         } else reject(new InternalServerError())
-      })
-    },
+      }),
 
     /**
      * @param  {any} item
      * @returns  {Promise}
      */
-    update: (item) => {
-      return new Promise((resolve, reject) => {
+    update: (item) =>
+      new Promise((resolve, reject) => {
         if (db[item[idKey]]) {
           db[item[idKey]] = { ...db[item[idKey]], ...item }
           resolve(db[item[idKey]])
         } else reject(new ItemNotFoundError(name))
-      })
-    },
+      }),
 
     /**
      * @param  {string} id
      * @returns  {Promise<string>}
      */
-    delete: (id) => {
-      return new Promise((resolve, reject) => {
+    delete: (id) =>
+      new Promise((resolve, reject) => {
         if (db[id]) {
           delete db[id]
           resolve(id)
         } else reject(new ItemNotFoundError(name))
-      })
-    },
+      }),
 
     /**
      * @returns  {Promise}

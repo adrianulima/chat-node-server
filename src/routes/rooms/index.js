@@ -24,9 +24,7 @@ rooms.post('/', (req, res) => {
       delete room.password
       res.status(HttpStatus.OK).json(room)
     })
-    .catch((error) => {
-      sendError(res, error)
-    })
+    .catch((error) => sendError(res, error))
 })
 
 rooms.get('/', (req, res) => {
@@ -42,9 +40,7 @@ rooms.get('/', (req, res) => {
       })
       res.status(HttpStatus.OK).json(roomList)
     })
-    .catch((error) => {
-      sendError(res, error)
-    })
+    .catch((error) => sendError(res, error))
 })
 
 rooms.get('/:roomId', (req, res) => {
@@ -57,9 +53,7 @@ rooms.get('/:roomId', (req, res) => {
       delete room.password
       res.status(HttpStatus.OK).json(room)
     })
-    .catch((error) => {
-      sendError(res, error)
-    })
+    .catch((error) => sendError(res, error))
 })
 
 rooms.put('/:roomId', (req, res) => {
@@ -67,13 +61,9 @@ rooms.put('/:roomId', (req, res) => {
   const { size, password } = req.body
   const item = { roomId }
 
-  if (size) {
-    item.size = size
-  }
+  if (size) item.size = size
 
-  if (password !== undefined) {
-    item.password = password
-  }
+  if (password !== undefined) item.password = password
 
   roomsDB
     .update(item)
@@ -83,9 +73,7 @@ rooms.put('/:roomId', (req, res) => {
       delete room.password
       res.status(HttpStatus.OK).json(room)
     })
-    .catch((error) => {
-      sendError(res, error)
-    })
+    .catch((error) => sendError(res, error))
 })
 
 rooms.delete('/:roomId', (req, res) => {
@@ -93,12 +81,8 @@ rooms.delete('/:roomId', (req, res) => {
 
   roomsDB
     .delete(roomId)
-    .then((room) => {
-      res.status(HttpStatus.OK).json(room)
-    })
-    .catch((error) => {
-      sendError(res, error)
-    })
+    .then((room) => res.status(HttpStatus.OK).json(room))
+    .catch((error) => sendError(res, error))
 })
 
 export default rooms
