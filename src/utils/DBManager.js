@@ -1,9 +1,11 @@
-import { uniqueId, values, orderBy } from 'lodash'
+import { values, orderBy } from 'lodash'
 import {
   ItemNotFoundError,
   MissingParamError,
   InternalServerError,
 } from './ErrorHandler'
+
+const generateId = () => Math.random().toString(36).substr(2, 6).toUpperCase()
 
 // eslint-disable-next-line jsdoc/require-returns
 /**
@@ -51,7 +53,7 @@ const DBManager = ({ name, idKey }) => {
      */
     insert: (item) =>
       new Promise((resolve, reject) => {
-        const id = uniqueId()
+        const id = generateId()
         if (!db[id]) {
           db[id] = { ...item, [idKey]: id }
           resolve(db[id])
