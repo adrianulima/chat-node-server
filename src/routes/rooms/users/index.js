@@ -10,7 +10,7 @@ const users = Router({ mergeParams: true })
 users.post('/', async (req, res) => {
   const { roomId } = req.params
   const { userName } = req.body
-  const password = req.headers
+  const { password } = req.headers
 
   const room = await getItem(roomsDB, roomId, res)
   if (!room) return
