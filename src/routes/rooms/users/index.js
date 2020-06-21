@@ -19,7 +19,11 @@ users.post('/', async (req, res) => {
 
   usersDB
     .insert({ userName, roomId })
-    .then((user) => res.status(200).json(user))
+    .then((user) => {
+      room.users = room.users || []
+      room.users.push(user)
+      res.status(200).json(user)
+    })
     .catch((error) => sendError(res, error))
 })
 

@@ -2,7 +2,7 @@ import { Router } from 'express'
 import HttpStatus from 'http-status-codes'
 import { messagesDB, roomsDB, usersDB } from '../../../db'
 import { getItem } from '../../../db/helpers'
-import { checkPassword, checkRoomUsers } from '../helpers'
+import { checkPassword, checkRoomUser } from '../helpers'
 import { sendError } from '../../../utils/errorHandler'
 
 const messages = Router({ mergeParams: true })
@@ -18,7 +18,7 @@ messages.post('/', async (req, res) => {
   const room = await getItem(roomsDB, roomId, res)
   if (!room) return
 
-  if (!checkRoomUsers(room, userId, res) || !checkPassword(room, password, res))
+  if (!checkRoomUser(room, userId, res) || !checkPassword(room, password, res))
     return
 
   messagesDB
@@ -36,7 +36,7 @@ messages.post('/', async (req, res) => {
 messages.get('/', async (req, res) => {
   const { roomId } = req.params
   const { password } = req.headers
-  const { offset, limit } = req.query
+  const { offset, limit, after, before } = req.query
 
   const room = await getItem(roomsDB, roomId, res)
   if (!room) return
@@ -47,6 +47,9 @@ messages.get('/', async (req, res) => {
     .getAll({
       offset: +offset || 0,
       limit: +limit || 0,
+      filter: (message) =>
+        (!after || message.timestamp > after) &&
+        (!before || message.timestamp < before),
       sort: 'timestamp',
       order: 'desc',
     })
