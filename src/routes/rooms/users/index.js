@@ -2,7 +2,7 @@ import { Router } from 'express'
 import HttpStatus from 'http-status-codes'
 import { roomsDB, usersDB } from '../../../db'
 import { getItem } from '../../../db/helpers'
-import { checkPassword } from '../helpers'
+import { checkPassword, isFull } from '../helpers'
 import { sendError } from '../../../utils/errorHandler'
 
 const users = Router({ mergeParams: true })
@@ -16,6 +16,8 @@ users.post('/', async (req, res) => {
   if (!room) return
 
   if (!checkPassword(room, password, res)) return
+
+  if (isFull(room, res)) return
 
   usersDB
     .insert({ userName, roomId })
