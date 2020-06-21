@@ -48,8 +48,8 @@ messages.get('/', async (req, res) => {
       offset: +offset || 0,
       limit: +limit || 0,
       filter: (message) =>
-        (!after || message.timestamp < after) &&
-        (!before || message.timestamp > before),
+        (!after || message.timestamp > after) &&
+        (!before || message.timestamp < before),
       sort: 'timestamp',
       order: 'desc',
     })
