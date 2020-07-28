@@ -4,6 +4,7 @@ import { roomsDB, usersDB } from '../../../db'
 import { getItem } from '../../../db/helpers'
 import { checkPassword, isFull } from '../helpers'
 import { sendError } from '../../../utils/errorHandler'
+import { map, includes } from 'lodash'
 
 const users = Router({ mergeParams: true })
 
@@ -39,10 +40,13 @@ users.get('/', async (req, res) => {
 
   if (!checkPassword(room, password, res)) return
 
+  const ids = map(room.users, 'userId')
+
   usersDB
     .getAll({
       offset: +offset || 0,
       limit: +limit || 0,
+      filter: (user) => includes(ids, user.userId),
     })
     .then((userList) => res.status(HttpStatus.OK).json(userList))
     .catch((error) => sendError(res, error))
