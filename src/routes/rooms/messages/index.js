@@ -4,6 +4,7 @@ import { messagesDB, roomsDB, usersDB } from '../../../db'
 import { getItem } from '../../../db/helpers'
 import { checkPassword, checkRoomUser } from '../helpers'
 import { sendError } from '../../../utils/errorHandler'
+import { map, includes } from 'lodash'
 
 const messages = Router({ mergeParams: true })
 
@@ -43,13 +44,16 @@ messages.get('/', async (req, res) => {
 
   if (!checkPassword(room, password, res)) return
 
+  const ids = map(room.users, 'userId')
+
   messagesDB
     .getAll({
       offset: +offset || 0,
       limit: +limit || 0,
       filter: (message) =>
         (!after || message.timestamp > after) &&
-        (!before || message.timestamp < before),
+        (!before || message.timestamp < before) &&
+        includes(ids, message.userId),
       sort: 'timestamp',
       order: 'desc',
     })
